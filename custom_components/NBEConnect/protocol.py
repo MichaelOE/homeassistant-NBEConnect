@@ -18,6 +18,7 @@
 """
 from __future__ import print_function
 import socket
+import select
 from random import randrange
 import time
 from Crypto.PublicKey import RSA
@@ -175,6 +176,19 @@ class Proxy:
         self.request.encrypted = encrypt
         self.request.pincode = self.password
         _LOGGER.debug(f"Making request to boiler. encrypt={encrypt}, Seqno={self.request.sequencenumber}, pw={self.request.pincode}")
+        # Check if there's data available to be read without blocking
+        ready_to_read, _, _ = select.select([self.s], [], [], 0)
+
+        if self.s in ready_to_read:
+            # Read and discard any existing data
+            try:
+                while True:
+                    dataDiscard, serverDiscard = self.s.recvfrom(4096)
+                    if not dataDiscard:
+                        break
+            except socket.error:
+                pass  # No more data to receive
+
         self.s.sendto(self.request.encode(), self.addr)
         data, server = self.s.recvfrom(4096)
         self.response.decode(data)
@@ -241,6 +255,4 @@ class Controller:
                     frame = self.response.encode()
                     self.s.sendto(frame , addr)
                     print ('  > ' + frame.decode('ascii'))
-
-
 
