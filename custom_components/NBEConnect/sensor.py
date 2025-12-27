@@ -59,7 +59,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
             RTBSensor(
                 dc,
                 "DWH Temperature",
-                "operating_data/sun_dhw_temp",
+                "operating_data/dhw_temp",
                 "dhw_temp",
                 "\u00b0C",
                 SensorDeviceClass.TEMPERATURE,
