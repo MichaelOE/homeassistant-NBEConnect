@@ -3,7 +3,7 @@ from homeassistant.helpers.entity import Entity
 from homeassistant.components.button import ButtonEntity
 
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
-from .const import DOMAIN
+from .const import DOMAIN, MANUFACTURER, MODEL
 from .protocol import Proxy
 from logging import getLogger
 
@@ -36,6 +36,16 @@ class RTBSignalButton(CoordinatorEntity, ButtonEntity):
     def name(self):
         """Return the name of the switch."""
         return self._name
+    
+    @property
+    def device_info(self):
+        """Return device information about this entity."""
+        return {
+            "identifiers": {(DOMAIN, self.coordinator.proxy.serial)},
+            "manufacturer": MANUFACTURER,
+            "model": MODEL,
+            "name": self.coordinator.proxy.serial,
+        }
     
     @property
     def unique_id(self):

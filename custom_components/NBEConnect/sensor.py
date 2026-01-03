@@ -246,25 +246,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
                 "",
                 SensorStateClass.MEASUREMENT,
             ),
-            RTBSensor(
-                dc,
-                "Boiler Temperature Setpoint",
-                "operating_data/boiler_ref",
-                "boiler_ref",
-                "\u00b0C",
-                SensorDeviceClass.TEMPERATURE,
-                SensorStateClass.MEASUREMENT,
-            ),
             # operating_data/mean_out_temp
-            RTBSensor(
-                dc,
-                "DWH Temperature Setpoint",
-                "operating_data/dhw_ref",
-                "dhw_ref",
-                "\u00b0C",
-                SensorDeviceClass.TEMPERATURE,
-                SensorStateClass.MEASUREMENT,
-            ),
             # operating_data/forward_ref
             # operating_data/sun2_temp=
             # operating_data/sun_surplus_temp
