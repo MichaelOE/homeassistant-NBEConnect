@@ -79,7 +79,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
                 "Boiler Effect",
                 "operating_data/power_kw",
                 "power_kw",
-                "kW",
+                "W",
                 SensorDeviceClass.POWER,
                 SensorStateClass.MEASUREMENT,
             ),
@@ -498,7 +498,12 @@ class RTBSensor(CoordinatorEntity, SensorEntity):
     def state(self):
         """Return the state of the sensor."""
         state = self.coordinator.rtbdata.get(self.client_key)
-        # _LOGGER.info(f"Sensor.py RTBSensor (state) returning \"{state}\"")
+        # Multiply by 1000 for 'Boiler Effect' (power_kw) to convert kW to W
+        if self.sensorname == "Boiler Effect" and state is not None:
+            try:
+                return float(state) * 1000
+            except (ValueError, TypeError):
+                return state
         return state
 
     @property
