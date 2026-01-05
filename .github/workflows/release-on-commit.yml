@@ -2,7 +2,7 @@ name: Create Release From manifest.json
 
 on:
   push:
-    branches: [ "main" ]   # triggers on main branch push
+    branches: [ "master" ]   # triggers on main branch push
 
 permissions:
   contents: write
@@ -18,7 +18,7 @@ jobs:
       - name: Read version from manifest.json
         id: manifest
         run: |
-          VERSION=$(jq -r '.version' custom_components/stokercloud/manifest.json)
+          VERSION=$(jq -r '.version' custom_components/NBEConnect/manifest.json)
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Create tag
