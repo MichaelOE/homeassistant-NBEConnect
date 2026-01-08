@@ -281,15 +281,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
             # operating_data/feed_low
             # operating_data/feed_medium
             # operating_data/feed_high
-            RTBSensor(
-                dc,
-                "Hopper content kg",
-                "operating_data/content",
-                "content",
-                "kg",
-                SensorDeviceClass.WEIGHT,
-                SensorStateClass.MEASUREMENT,
-            ),
+            
             # operating_data/state
             # operating_data/substate
             RTBBinarySensor(

@@ -45,6 +45,20 @@ async def async_setup_entry(hass, entry, async_add_entities):
                 max_value=90,
                 step=1,
             ),
+            RTBNumber(
+                dc,
+                proxy,
+                "Hopper content",
+                "settings/hopper/content",
+                "settings/hopper/content",
+                "hopper_content",
+                "kg",
+                NumberDeviceClass.WEIGHT,
+                min_value=0,
+                max_value=1000,
+                step=1,
+                integer_only=True,
+            ),
         ]
     )
 
@@ -67,6 +81,7 @@ class RTBNumber(CoordinatorEntity, NumberEntity):
         min_value=0,
         max_value=100,
         step=1,
+        integer_only: bool = False,
     ):
         """Initialize the number entity."""
         super().__init__(coordinator)
@@ -81,6 +96,7 @@ class RTBNumber(CoordinatorEntity, NumberEntity):
         self._attr_native_min_value = min_value
         self._attr_native_max_value = max_value
         self._attr_native_step = step
+        self._integer_only = integer_only
 
     @property
     def device_info(self):
@@ -118,8 +134,17 @@ class RTBNumber(CoordinatorEntity, NumberEntity):
         value = self.coordinator.rtbdata.get(self._state_key)
         if value is not None:
             try:
-                return float(value)
+                parsed = float(value)
+                if self._integer_only:
+                    return int(round(parsed))
+                return parsed
             except (ValueError, TypeError):
+                # Fallback: try integer parsing for integer-only entities
+                if self._integer_only:
+                    try:
+                        return int(str(value).strip())
+                    except Exception:
+                        pass
                 _LOGGER.warning(f"Could not convert value '{value}' to float")
                 return None
         return None
@@ -128,9 +153,25 @@ class RTBNumber(CoordinatorEntity, NumberEntity):
         """Set new value."""
         _LOGGER.info(f"Setting {self._name} to {value}")
         try:
-            # Convert float to string for the protocol and run in executor
+            # Enforce integer for integer-only entities
+            if self._integer_only:
+                v = int(round(value))
+            else:
+                v = value
+
+            # Clamp to allowed range if available
+            min_v = getattr(self, "_attr_native_min_value", None)
+            max_v = getattr(self, "_attr_native_max_value", None)
+            if min_v is not None:
+                v = max(v, min_v)
+            if max_v is not None:
+                v = min(v, max_v)
+
+            # Convert to protocol string (integers without decimals when required)
+            payload = str(int(v)) if self._integer_only else str(v)
+
             await self.hass.async_add_executor_job(
-                self.proxy.set, self._control_path, str(int(value))
+                self.proxy.set, self._control_path, payload
             )
             # Request coordinator update to reflect the change
             await self.coordinator.async_request_refresh()
