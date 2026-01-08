@@ -68,11 +68,30 @@ class RTBDataCoordinator(DataUpdateCoordinator):
             consumption_data = await self.hass.async_add_executor_job(
                 self.proxy.get, "consumption_data/counter"
             )
+            # Read hopper content from settings to reflect exact integer set value
+            hopper_setting = None
+            try:
+                hopper_setting = await self.hass.async_add_executor_job(
+                    self.proxy.get, "settings/hopper/content"
+                )
+            except Exception:
+                # If settings read fails, continue without it
+                hopper_setting = None
             logger.debug(operating_data)
             logger.debug(consumption_data)
+            logger.debug(hopper_setting)
             if operating_data is not None:
                 if consumption_data is not None:
                     operating_data = operating_data + consumption_data
+                # Append settings value in key=value form so RTBData.get can retrieve it
+                if hopper_setting and len(hopper_setting) > 0 and hopper_setting[0] is not None:
+                    try:
+                        operating_data.append(
+                            f"settings/hopper/content={hopper_setting[0]}"
+                        )
+                    except Exception:
+                        # Keep integration resilient if unexpected value format
+                        pass
                 self.rtbdata.set(operating_data)
             return operating_data
         except TimeoutError as e:
