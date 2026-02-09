@@ -6,7 +6,7 @@
           "data": {
             "serial": "Seriel no:",
             "password": "Password:",
-            "ip_address": "Controller IP (leave empty for auto discover" 
+            "ip_address": "Controller IP (leave empty for auto discover):" 
           }
         }
       }

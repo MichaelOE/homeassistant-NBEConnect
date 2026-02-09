@@ -19,3 +19,40 @@ Optionally you can choose to enter the boiler IP address. Either you need to set
 
 You can also choose to leave the IP-field empty. In that case, this integration will autodiscover the boiler. 
 
+## Installation via HACS
+
+If you use **HACS (Home Assistant Community Store)**, installing this integration is straightforward:
+
+1. **Install HACS** if you haven’t already:  
+   Follow the instructions here: [https://hacs.xyz/docs/installation/prerequisites](https://hacs.xyz/docs/installation/prerequisites)
+
+2. **Add the repository to HACS**:
+   - Open **Home Assistant → HACS → Integrations → +**  
+   - Select **“Custom repository”** at the bottom.  
+   - Enter the GitHub repository URL for this integration:  
+
+     ```
+     https://github.com/MichaelOE/homeassistant-NBEConnect
+     ```
+
+   - Choose **Integration** as the type.  
+   - Click **Add**.
+
+3. **Install the integration**:
+   - After adding the repository, it will appear in HACS under **Integrations → Explore & Add Repositories → Installed**.  
+   - Click **Install**.
+
+4. **Restart Home Assistant**:
+   - Go to **Settings → System → Restart** to load the new integration.
+
+5. **Add the integration in Home Assistant**:
+   - Go to **Settings → Devices & Services → Add Integration**.  
+   - Search for **NBEConnect**.  
+
+6. **Configuration**:
+   - Enter your boiler’s **serial number** and **password** (found on the boiler label).  
+   - Optionally, enter the **boiler IP address** or leave blank for autodiscovery.
+
+> 💡 **Tips:**  
+> - Using HACS ensures the integration can be **easily updated** when new releases are published.  
+> - If you encounter issues, make sure your HA version matches the **`manifest.json`** requirements.
